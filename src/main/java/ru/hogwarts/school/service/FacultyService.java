@@ -3,6 +3,7 @@ package ru.hogwarts.school.service;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
@@ -31,7 +32,12 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        Optional<Faculty> editFaculty = facultyRepository.findById(faculty.getId());
+        if (editFaculty.isPresent()) {
+            return facultyRepository.save(faculty);
+        } else {
+            throw new EntityNotFoundException("Такого факультета нет");
+        }
     }
 
     public Faculty delFaculty(long id) {

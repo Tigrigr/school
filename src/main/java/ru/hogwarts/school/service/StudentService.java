@@ -32,7 +32,12 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {
-        return studentRepository.save(student);
+        Optional<Student> editStudent = studentRepository.findById(student.getId());
+        if (editStudent.isPresent()) {
+            return studentRepository.save(student);
+        } else {
+            throw new EntityNotFoundException("Такого студента нет");
+        }
     }
 
     public Student delStudent(long id) {
