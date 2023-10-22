@@ -3,47 +3,51 @@ package ru.hogwarts.school.service;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
-    private final HashMap<Long, Student> students = new HashMap<>();
+    private final StudentRepository studentRepository;
 
-    private long idCount = 1;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     public Student addStudent(Student student) {
-        students.put(idCount++, student);
-        return student;
+        return studentRepository.save(student);
     }
 
     public Student findStudent(long id) {
-        if (students.containsKey(id)) {
-            return students.get(id);
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()) {
+            return student.get();
+        } else {
+            throw new EntityNotFoundException("Студент с таким id не найден");
         }
-        throw new EntityNotFoundException("Студент с таким id не найден");
     }
 
     public Student editStudent(Student student) {
-        if (students.containsKey(student.getId())) {
-            return students.put(student.getId(), student);
+        Optional<Student> editStudent = studentRepository.findById(student.getId());
+        if (editStudent.isPresent()) {
+            return studentRepository.save(student);
+        } else {
+            throw new EntityNotFoundException("Такого студента нет");
         }
-        throw new EntityNotFoundException("Студент с таким id не найден");
     }
 
     public Student delStudent(long id) {
-        if (students.containsKey(id)) {
-            return students.remove(id);
-        }
-        throw new EntityNotFoundException("Студент с таким id не найден");
+        Student student = findStudent(id);
+        studentRepository.deleteById(id);
+        return student;
     }
 
     public Collection<Student> getAllStudent() {
-        return students.values();
+        return studentRepository.findAll();
     }
 
 //    public Collection<Student> findByAge(int age) {
@@ -56,8 +60,7 @@ public class StudentService {
 //        return result;
 //    }
 
-    public Collection<Student> findByAge(int age) {
-        return this.students.values().stream()
-                .filter(s -> s.getAge() == age).collect(Collectors.toList());
+    public Collection<Student> getByAgeBetween(int startAge, int endAge) {
+        return studentRepository.findStudentsByAgeBetween(startAge, endAge);
     }
 }

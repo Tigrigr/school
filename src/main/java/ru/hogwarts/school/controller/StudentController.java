@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
@@ -68,11 +70,18 @@ public class StudentController {
 
     @GetMapping("age")
     @Operation(summary = "Получение всех студентов по возрасту")
-    public ResponseEntity<Collection<Student>> getStudentsByAge(@RequestParam(required = false) int age) {
-        if (age >= 0) {
-            Collection<Student> students = studentService.findByAge(age);
+    public ResponseEntity<Collection<Student>> getByAgeBetween(@RequestParam int startAge, @RequestParam int endAge) {
+        if (startAge >= 0) {
+            Collection<Student> students = studentService.getByAgeBetween(startAge, endAge);
             return ResponseEntity.ok(students);
         }
         return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping("faculty/{studentId}")
+    @Operation(summary = "Получение факультета студента")
+    public ResponseEntity<Faculty> getFaculty (@PathVariable long studentId) {
+        Faculty faculty = studentService.findStudent(studentId).getFaculty();
+        return ResponseEntity.ok(faculty);
     }
 }
