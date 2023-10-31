@@ -50,15 +50,6 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-//    public Collection<Student> findByAge(int age) {
-//        ArrayList<Student> result = new ArrayList<>();
-//        for (Student student : students.values()) {
-//            if (student.getAge() == age) {
-//                result.add(student);
-//            }
-//        }
-//        return result;
-//    }
 
     public Collection<Student> getByAgeBetween(int startAge, int endAge) {
         return studentRepository.findStudentsByAgeBetween(startAge, endAge);
