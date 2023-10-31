@@ -67,7 +67,7 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculties);
     }
-    @GetMapping("color")
+    @GetMapping("find")
     @Operation(summary = "Получение всех факультетов по цвету или имени")
     public ResponseEntity<Collection<Faculty>> getByColorOrName (@RequestParam(required = false) String color,
                                                                  @RequestParam(required = false) String name) {
